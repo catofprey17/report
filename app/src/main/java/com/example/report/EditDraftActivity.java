@@ -5,18 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Session2Command;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.report.reporter.ReportIO;
+
+import java.io.IOException;
+
 public class EditDraftActivity extends AppCompatActivity {
 
-    public static final String BITMAP_EXTRA = "bitmap";
+    public static final String URI_EXTRA = "uri";
     public static final String NUM_EXTRA = "num";
 
-    public static Bitmap sBitmap;
 
     private ImageView mImageView;
     private EditText mEditText;
@@ -31,11 +35,18 @@ public class EditDraftActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.image_edit_draft);
         mButton = findViewById(R.id.button_save_changes);
 
+
         Intent intent = getIntent();
-        if (intent.hasExtra(NUM_EXTRA)) {
-            mImageView.setImageBitmap(sBitmap);
-            mEditText.setText(intent.getStringExtra(NUM_EXTRA));
-        } else {
+        try {
+            if (intent.hasExtra(NUM_EXTRA) && intent.hasExtra(URI_EXTRA)) {
+                mImageView.setImageBitmap(ReportIO.getBitmapFromUri(this,(Uri)intent.getParcelableExtra(URI_EXTRA)));
+                mEditText.setText(intent.getStringExtra(NUM_EXTRA));
+            } else {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
             setResult(RESULT_CANCELED);
             finish();
         }

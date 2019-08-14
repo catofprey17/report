@@ -23,11 +23,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.example.report.entities.Draft;
 import com.example.report.reporter.Recognizer;
 import com.example.report.reporter.ReportIO;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +41,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
     private static final int PERMISSION_REQUEST_CODE = 103;
     private static final int EDIT_DRAFT_REQUEST_CODE = 666;
 
-    private LinkedHashMap<Uri, Integer> mData;
+    private List<Draft> mData;
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
@@ -56,8 +58,8 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         mRecyclerView = findViewById(R.id.rv_add_report);
 
 
-        mData = new LinkedHashMap<>();
-        mAdapter = new AddReportAdapter(mData, this);
+        mData = new ArrayList<Draft>();
+        mAdapter = new AddReportAdapter(this, mData, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
         mRecyclerView.setLayoutManager(layoutManager);
@@ -122,11 +124,10 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
     }
 
     @Override
-    public void onItemClick(Bitmap bitmap) {
+    public void onItemClick(Draft draft) {
         Intent intent = new Intent(this, EditDraftActivity.class);
-        intent.putExtra(EditDraftActivity.BITMAP_EXTRA, bitmap);
-        intent.putExtra(EditDraftActivity.NUM_EXTRA, mData.get(bitmap));
-        EditDraftActivity.sBitmap = bitmap;
+        intent.putExtra(EditDraftActivity.URI_EXTRA, draft.getUri());
+        intent.putExtra(EditDraftActivity.NUM_EXTRA, draft.getNumber());
         startActivityForResult(intent, EDIT_DRAFT_REQUEST_CODE);
     }
 
@@ -136,12 +137,12 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
 
 
-    class BitmapAsyncTask extends AsyncTask<Intent, Boolean, LinkedHashMap<Uri, Integer>> {
+    class BitmapAsyncTask extends AsyncTask<Intent, Boolean, List<Draft>> {
 
         private WeakReference<Context> contextRef;
 
         public BitmapAsyncTask(Context context) {
-            contextRef = new WeakReference<Context>(context);
+            contextRef = new WeakReference<>(context);
         }
 
         @Override
@@ -151,13 +152,17 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         }
 
         @Override
-        protected LinkedHashMap<Uri, Integer> doInBackground(Intent... intents) {
+        protected List<Draft> doInBackground(Intent... intents) {
             try {
-                LinkedHashMap<Uri, Integer> result;
+                List<Draft> drafts= new ArrayList<Draft>();
+                List<Uri> uris = ReportIO.getUriList(intents[0]);
                 Recognizer recognizer = new Recognizer(contextRef.get());
-                List<Bitmap> bitmaps = ReportIO.getBitmapList(contextRef.get(), intents[0]);
-                result = recognizer.getDraftsHashMap(bitmaps);
-                return result;
+                for (int i = 0; i < uris.size(); i++) {
+                    Draft draft = new Draft(uris.get(i));
+                    draft.setNumber(recognizer.getDraftNum(ReportIO.getBitmapFromUri(contextRef.get(), uris.get(i))));
+                    drafts.add(draft);
+                }
+                return drafts;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -171,9 +176,9 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         }
 
         @Override
-        protected void onPostExecute(LinkedHashMap<Uri, Integer> bitmapUriHashMap) {
-            super.onPostExecute(bitmapUriHashMap);
-            mData.putAll(bitmapUriHashMap);
+        protected void onPostExecute(List<Draft> drafts) {
+            super.onPostExecute(drafts);
+            mData.addAll(drafts);
             mAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
 

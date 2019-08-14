@@ -1,6 +1,12 @@
 package com.example.report.entities;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.example.report.reporter.ReportIO;
+
+import java.io.IOException;
 
 public class Draft {
 
@@ -14,8 +20,10 @@ public class Draft {
         this.uri = uri;
         try {
             int temp = Integer.parseInt(number);
-            if (temp >=MIN_NUMBER && temp <= MAX_NUMBER);
-            this.number = number;
+            if (temp >=MIN_NUMBER && temp <= MAX_NUMBER)
+                this.number = number;
+            else
+                this.number = "";
         } catch (NumberFormatException ex) {
             this.number = "";
         }
@@ -39,7 +47,15 @@ public class Draft {
     }
 
     public void setNumber(String number) {
-        this.number = number;
+        try {
+            int temp = Integer.parseInt(number);
+            if (temp >=MIN_NUMBER && temp <= MAX_NUMBER)
+                this.number = number;
+            else
+                this.number = "";
+        } catch (NumberFormatException ex) {
+            this.number = "";
+        }
     }
 
     public Uri getUri() {
@@ -48,6 +64,10 @@ public class Draft {
 
     public void setUri(Uri uri) {
         this.uri = uri;
+    }
+
+    public Bitmap getBitmap (Context context) throws IOException {
+        return ReportIO.getBitmapFromUri(context, this.uri);
     }
 
     @Override

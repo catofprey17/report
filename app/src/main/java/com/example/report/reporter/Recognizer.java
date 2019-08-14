@@ -37,9 +37,7 @@ public class Recognizer {
     }
 
 
-    private String getDraftNum(Bitmap bitmap) throws IOException {
-
-        ReportIO.copyTessdataToInternalStorage(mContext);
+    public String getDraftNum(Bitmap bitmap) throws IOException {
 
         bitmap = cropDraft(bitmap);
 

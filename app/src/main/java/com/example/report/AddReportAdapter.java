@@ -14,16 +14,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.report.entities.Draft;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddReportViewHolder> {
 
-    private LinkedHashMap<Bitmap, Integer> mData;
+    private List<Draft> mData;
     private ItemClickListener mListener;
+    private Context mContext;
 
-    public AddReportAdapter(LinkedHashMap<Bitmap, Integer> data, ItemClickListener listener) {
+    public AddReportAdapter(Context context, List<Draft> data, ItemClickListener listener) {
+        mContext = context;
         mData = data;
         mListener = listener;
     }
@@ -32,7 +38,7 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
     @Override
     public AddReportViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        LayoutInflater inflater =LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(R.layout.add_report_item, parent, false);
 
@@ -43,14 +49,17 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
 
     @Override
     public void onBindViewHolder(@NonNull AddReportViewHolder holder, int position) {
-        int num = new ArrayList<Integer>(mData.values()).get(position);
-        if (num != 0) {
-            holder.mTextView.setText(String.valueOf(num));
-        } else {
-            // TODO Fix color
-            holder.mLayout.setBackgroundColor(Color.parseColor("#FF5555"));
+        Draft draft = mData.get(position);
+        try {
+            if (draft.getNumber().isEmpty()) {
+                // TODO Fix color
+                holder.mLayout.setBackgroundColor(Color.parseColor("#FF5555"));
+            }
+            holder.mTextView.setText(draft.getNumber());
+            holder.mImageView.setImageBitmap(draft.getBitmap(mContext));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        holder.mImageView.setImageBitmap((Bitmap) mData.keySet().toArray()[position]);
     }
 
     @Override
@@ -80,13 +89,13 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
 
         @Override
         public void onClick(View view) {
-            Bitmap bitmap = (Bitmap) mData.keySet().toArray()[getAdapterPosition()];
-            mListener.onItemClick(bitmap);
+            Draft draft =mData.get(getAdapterPosition());
+            mListener.onItemClick(draft);
 
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(Bitmap bitmap);
+        void onItemClick(Draft draft);
     }
 }
