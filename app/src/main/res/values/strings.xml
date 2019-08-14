@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Report</string>
+
+
+    <!--TODO Remove stock strings-->
+    <string name="title_home">Home</string>
+
+
+    <!--Navbar items-->
+    <string name="navbar_title_report">Reports</string>
+
+    <!--Notifications-->
+    <string name="channel_job_name">Report reminder</string>
+    <string name="channel_report_name">Report completed</string>
+    <string name="notification_title_job">The day is done</string>
+    <string name="notification_description_job">You need to send a report</string>
+    <string name="notification_description_prefix_job">It\'s already</string>
+
+</resources>

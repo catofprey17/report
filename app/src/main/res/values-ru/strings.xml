@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Отчёт</string>
+    <string name="navbar_title_report">Отчёты</string>
+    <string name="channel_job_name">Необходимо сделать отчёт</string>
+    <string name="channel_report_name">Отчёт готов</string>
+    <string name="notification_title_job">День подходит к концу</string>
+    <string name="notification_description_job">Необходимо отправить отчет</string>
+    <string name="notification_description_prefix_job">Уже</string>
+</resources>
