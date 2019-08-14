@@ -13,6 +13,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.example.report.entities.Draft;
 import com.googlecode.tesseract.android.TessPdfRenderer;
 
 import java.io.File;
@@ -127,5 +128,10 @@ public class ReportIO {
         bitmap = bitmap.copy(Bitmap.Config.ARGB_8888,true);
 
         return bitmap;
+    }
+
+    // TODO Complete method
+    public static Boolean createReport(List<Draft> drafts) {
+        return null;
     }
 }

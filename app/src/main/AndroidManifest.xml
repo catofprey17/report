@@ -12,8 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditDraftActivity"></activity>
-        <activity android:name=".AddReportActivity" />
+        <activity android:name=".EditDraftActivity"
+            android:label="@string/label_edit_draft"/>
+        <activity android:name=".AddReportActivity"
+            android:label="@string/label_add_report"/>
         <activity android:name=".SettingsActivity" />
         <activity
             android:name=".MainActivity"

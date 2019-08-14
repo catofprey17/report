@@ -14,26 +14,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.report.entities.Draft;
 import com.example.report.reporter.Recognizer;
 import com.example.report.reporter.ReportIO;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AddReportActivity extends AppCompatActivity implements AddReportAdapter.ItemClickListener{
 
@@ -46,6 +42,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private AddReportAdapter mAdapter;
+    private MaterialButton mCreateButton;
 
 
 
@@ -56,9 +53,12 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
         mProgressBar = findViewById(R.id.progress_bar);
         mRecyclerView = findViewById(R.id.rv_add_report);
+        mCreateButton = findViewById(R.id.button_create_report);
 
 
-        mData = new ArrayList<Draft>();
+
+
+        mData = new ArrayList<>();
         mAdapter = new AddReportAdapter(this, mData, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -70,27 +70,32 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
 
+
         launchDraftsInput();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
-            case IMAGES_REQUEST_CODE: {
+            case IMAGES_REQUEST_CODE:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        BitmapAsyncTask task = new BitmapAsyncTask(this);
+                        task.execute(data);
+                        break;
+
+                    case Activity.RESULT_CANCELED:
+                        setResult(RESULT_CANCELED);
+                        finish();
+                }
+                break;
+
+            case EDIT_DRAFT_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    BitmapAsyncTask task = new BitmapAsyncTask(this);
-                    task.execute(data);
 
                 }
                 break;
-            }
 
-            case EDIT_DRAFT_REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_OK) {
-
-                }
-                break;
-            }
         }
     }
 
@@ -129,6 +134,31 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         intent.putExtra(EditDraftActivity.URI_EXTRA, draft.getUri());
         intent.putExtra(EditDraftActivity.NUM_EXTRA, draft.getNumber());
         startActivityForResult(intent, EDIT_DRAFT_REQUEST_CODE);
+    }
+
+
+    // TODO Move to another thread
+    @Override
+    public void checkForCreationAvailability() {
+        int wrongNums = 0;
+        for (int i = 0; i< mData.size(); i++) {
+            if (mData.get(i).getNumber().equals(""))
+                wrongNums++;
+
+        }
+        if (wrongNums > 0) {
+            String message = getString(
+                    R.string.snack_message_add_report_prefix) +
+                    " " +
+                    wrongNums +
+                    " " +
+                    getString(R.string.snack_mesage_add_report_postfix);
+            View view = findViewById(R.id.root_activity_add_report);
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
+        } else {
+            mCreateButton.setEnabled(true);
+        }
+
     }
 
 
@@ -181,7 +211,8 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
             mData.addAll(drafts);
             mAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
-
+            mCreateButton.setVisibility(View.VISIBLE);
+            checkForCreationAvailability();
         }
     }
 

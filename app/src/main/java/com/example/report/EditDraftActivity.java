@@ -24,7 +24,7 @@ public class EditDraftActivity extends AppCompatActivity {
 
     private ImageView mImageView;
     private EditText mEditText;
-    private ImageButton mButton;
+    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +35,7 @@ public class EditDraftActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.image_edit_draft);
         mButton = findViewById(R.id.button_save_changes);
 
+        //TODO Add button handle and EditText text changes
 
         Intent intent = getIntent();
         try {

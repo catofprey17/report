@@ -3,11 +3,9 @@
 
 
     <!--TODO Remove stock strings-->
-    <string name="title_home">Home</string>
 
 
     <!--Navbar items-->
-    <string name="navbar_title_report">Reports</string>
 
     <!--Notifications-->
     <string name="channel_job_name">Report reminder</string>
@@ -15,5 +13,10 @@
     <string name="notification_title_job">The day is done</string>
     <string name="notification_description_job">You need to send a report</string>
     <string name="notification_description_prefix_job">It\'s already</string>
+    <string name="label_add_report">Add new report</string>
+    <string name="label_edit_draft">Edit draft</string>
+    <string name="snack_message_add_report_prefix">It\'s necessary to number</string>
+    <string name="snack_mesage_add_report_postfix">drafts</string>
+    <string name="create_report_button_text">Create a report</string>
 
 </resources>

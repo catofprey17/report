@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,6 +49,7 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
         return viewHolder;
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull AddReportViewHolder holder, int position) {
         Draft draft = mData.get(position);
@@ -70,11 +73,14 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
         return mData.size();
     }
 
-    class AddReportViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+
+    class AddReportViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mImageView;
         private TextView mTextView;
         private LinearLayout mLayout;
+        private ImageButton mButton;
 
         public AddReportViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,20 +88,31 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
             mLayout = itemView.findViewById(R.id.viewHolder_add_report);
             mImageView = itemView.findViewById(R.id.image_draft);
             mTextView = itemView.findViewById(R.id.text_number);
+            mButton = itemView.findViewById(R.id.button_remove_draft);
 
-            // TODO Divide listeners
-            itemView.setOnClickListener(this);
+            mLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Draft draft = mData.get(getAdapterPosition());
+                    mListener.onItemClick(draft);
+                }
+            });
+
+            mButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mData.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
+                    mListener.checkForCreationAvailability();
+                }
+            });
+
         }
 
-        @Override
-        public void onClick(View view) {
-            Draft draft =mData.get(getAdapterPosition());
-            mListener.onItemClick(draft);
-
-        }
     }
 
     public interface ItemClickListener {
         void onItemClick(Draft draft);
+        void checkForCreationAvailability();
     }
 }
