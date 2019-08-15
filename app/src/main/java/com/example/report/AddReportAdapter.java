@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.report.entities.Draft;
@@ -55,8 +56,9 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
         Draft draft = mData.get(position);
         try {
             if (draft.getNumber().isEmpty()) {
-                // TODO Fix color
-                holder.mLayout.setBackgroundColor(Color.parseColor("#FF5555"));
+                holder.mLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemIncorrect));
+            } else {
+                holder.mLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemCorrect));
             }
             holder.mTextView.setText(draft.getNumber());
             holder.mImageView.setImageBitmap(draft.getBitmap(mContext));
@@ -64,6 +66,8 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -93,8 +97,7 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
             mLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Draft draft = mData.get(getAdapterPosition());
-                    mListener.onItemClick(draft);
+                    mListener.onItemClick(getAdapterPosition());
                 }
             });
 
@@ -112,7 +115,7 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
     }
 
     public interface ItemClickListener {
-        void onItemClick(Draft draft);
+        void onItemClick(int position);
         void checkForCreationAvailability();
     }
 }

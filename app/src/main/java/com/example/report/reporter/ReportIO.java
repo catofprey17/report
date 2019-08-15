@@ -60,7 +60,7 @@ public class ReportIO {
         } else {Log.d(TAG, "TESSDATA already copied");}
     }
 
-    // TODO Change List<Bitmap> to List<Drafts>
+    // TODO Remove method
     public static List<Bitmap> getBitmapList(Context context, Intent data) throws IOException {
 
         // Get Bitmaps from Intent data

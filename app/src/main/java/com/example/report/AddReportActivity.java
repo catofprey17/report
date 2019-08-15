@@ -90,9 +90,18 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
                 }
                 break;
 
+                // TODO cache exceptions
             case EDIT_DRAFT_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Integer index = data.getIntExtra(EditDraftActivity.LIST_INDEX_EXTRA, -1);
+                        String number = data.getStringExtra(EditDraftActivity.NUM_EXTRA);
+                        if (index == -1) {
+                            return;
+                        }
+                        mData.get(index).setNumber(number);
+                        mAdapter.notifyDataSetChanged();
+                        checkForCreationAvailability();
                 }
                 break;
 
@@ -129,10 +138,12 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
     }
 
     @Override
-    public void onItemClick(Draft draft) {
+    public void onItemClick(int position) {
         Intent intent = new Intent(this, EditDraftActivity.class);
+        Draft draft = mData.get(position);
         intent.putExtra(EditDraftActivity.URI_EXTRA, draft.getUri());
         intent.putExtra(EditDraftActivity.NUM_EXTRA, draft.getNumber());
+        intent.putExtra(EditDraftActivity.LIST_INDEX_EXTRA, position);
         startActivityForResult(intent, EDIT_DRAFT_REQUEST_CODE);
     }
 
