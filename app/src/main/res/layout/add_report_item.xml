@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/viewHolder_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -8,7 +9,7 @@
     android:layout_marginBottom="2dp">
 
     <LinearLayout
-        android:id="@+id/viewHolder_add_report"
+        android:id="@+id/viewHolder_item_description"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="5"

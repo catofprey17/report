@@ -72,6 +72,15 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
 
         launchDraftsInput();
+
+
+        mCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ReportCreatingAsyncTask task = new ReportCreatingAsyncTask(AddReportActivity.this);
+                task.execute(mData);
+            }
+        });
     }
 
     @Override
@@ -224,6 +233,24 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
             mProgressBar.setVisibility(View.INVISIBLE);
             mCreateButton.setVisibility(View.VISIBLE);
             checkForCreationAvailability();
+        }
+    }
+
+    class ReportCreatingAsyncTask extends AsyncTask<List<Draft>,Integer,Void> {
+
+        private WeakReference<Context> contextRef;
+
+        public ReportCreatingAsyncTask(Context context) {contextRef = new WeakReference<>(context);}
+
+
+        @Override
+        protected Void doInBackground(List<Draft>... lists) {
+            try {
+                ReportIO.createReport(contextRef.get(), lists[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 

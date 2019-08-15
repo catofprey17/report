@@ -1,13 +1,9 @@
 package com.example.report;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,9 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.report.entities.Draft;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddReportViewHolder> {
@@ -56,9 +49,9 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
         Draft draft = mData.get(position);
         try {
             if (draft.getNumber().isEmpty()) {
-                holder.mLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemIncorrect));
+                holder.mRoot.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemIncorrect));
             } else {
-                holder.mLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemCorrect));
+                holder.mRoot.setBackgroundColor(ContextCompat.getColor(mContext, R.color.recyclerItemCorrect));
             }
             holder.mTextView.setText(draft.getNumber());
             holder.mImageView.setImageBitmap(draft.getBitmap(mContext));
@@ -83,18 +76,20 @@ public class AddReportAdapter extends RecyclerView.Adapter<AddReportAdapter.AddR
 
         private ImageView mImageView;
         private TextView mTextView;
-        private LinearLayout mLayout;
+        private LinearLayout mDescription;
+        private LinearLayout mRoot;
         private ImageButton mButton;
 
         public AddReportViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mLayout = itemView.findViewById(R.id.viewHolder_add_report);
+            mDescription = itemView.findViewById(R.id.viewHolder_item_description);
             mImageView = itemView.findViewById(R.id.image_draft);
             mTextView = itemView.findViewById(R.id.text_number);
             mButton = itemView.findViewById(R.id.button_remove_draft);
+            mRoot = itemView.findViewById(R.id.viewHolder_root);
 
-            mLayout.setOnClickListener(new View.OnClickListener() {
+            mDescription.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mListener.onItemClick(getAdapterPosition());
