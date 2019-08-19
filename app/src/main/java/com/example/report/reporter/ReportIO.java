@@ -39,6 +39,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class ReportIO {
 
@@ -46,6 +48,7 @@ public class ReportIO {
     public static final String TESSDATA_SUB = "tessdata";
     public static final String TESSDATA_FILE = TESSDATA_SUB + "/eng.traineddata";
     public static final String TEMPORARY_SUBFOLDER = "/temp";
+
 
 
     public static void copyTessdataToInternalStorage(Context context) throws IOException {
@@ -111,12 +114,12 @@ public class ReportIO {
     }
 
     // TODO Complete method
-    public static Boolean createReport(Context context, List<Draft> drafts) throws IOException {
+    public static Boolean createReport(Context context, List<Draft> drafts) {
         String hz = fillTemporaryFolder(context, drafts);
         return null;
     }
 
-    private static String fillTemporaryFolder(Context context, List<Draft> drafts) throws IOException {
+    private static String fillTemporaryFolder(Context context, List<Draft> drafts) {
 
         // Get count of drafts for each number
         LinkedHashMap<String, Integer> numbers = new LinkedHashMap<>();
@@ -141,6 +144,14 @@ public class ReportIO {
         createFolder(path);
 
 
+        // TODO create const
+        createFolder(path +"/zips");
+
+        // TODO create const
+        String draftsPath = path + "/drafts";
+        createFolder(path +"/drafts");
+
+
         // Create a temporary directory for drafts and daily folder if its not exist
 
 
@@ -149,7 +160,7 @@ public class ReportIO {
             String key = new ArrayList<>(numbers.keySet()).get(i);
             List<Integer> l = new ArrayList<>(numbers.values());
             String value = String.valueOf(l.get(i));
-            numberSubPath = path + "/" + key + "(" + value + ")";
+            numberSubPath = draftsPath + "/" + key + "(" + value + ")";
             createFolder(numberSubPath);
 
             int counter = 1;
@@ -163,6 +174,16 @@ public class ReportIO {
             }
 
         }
+
+
+        // Create zip archive with drafts
+
+        createSubZips(path + "/drafts", path + "/zips");
+
+        String finalZipPath = context.getFilesDir().getAbsolutePath() + "/zips";
+
+        createFolder(finalZipPath);
+        createFinalZip(path + "/zips", finalZipPath + "/" +dateFormat.format(currentDate) + ".zip");
 
 
         return null;
@@ -239,5 +260,84 @@ public class ReportIO {
                 cleanFolder(child);
 
         directory.delete();
+    }
+
+    private static void createSubZips(String sourcePath, String destPath) {
+
+        File[] folder = new File(sourcePath).listFiles();
+        final int BUFFER = 2048;
+
+        for (File subfolder: folder) {
+            try {
+                String zipPath = destPath + "/" + subfolder.getName() + ".zip";
+                BufferedInputStream sourceBIS;
+                ZipOutputStream destZOS = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipPath)));
+                destZOS.setLevel(0);
+                byte data[] = new byte[BUFFER];
+
+                File[] draftFolder = subfolder.listFiles();
+                for (File draft: draftFolder) {
+                    FileInputStream sourceFIS = new FileInputStream(draft);
+                    sourceBIS = new BufferedInputStream(sourceFIS,BUFFER);
+
+                    ZipEntry entry = new ZipEntry(draft.getName());
+                    destZOS.putNextEntry(entry);
+
+                    int count;
+                    while ((count = sourceBIS.read(data, 0, BUFFER)) != -1) {
+                        destZOS.write(data, 0, count);
+                    }
+
+                }
+                destZOS.close();
+                Log.d(TAG, zipPath + " ZIP created");
+
+
+
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+    }
+
+    private static void createFinalZip(String sourcePath, String destPath) {
+        File[] zips = new File(sourcePath).listFiles();
+        final int BUFFER = 2048;
+
+        try {
+            BufferedInputStream sourceBIS;
+            ZipOutputStream destZOS = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destPath)));
+            destZOS.setLevel(0);
+            byte data[] = new byte[BUFFER];
+            for (File zip: zips) {
+                FileInputStream sourceFIS = new FileInputStream(zip);
+                sourceBIS = new BufferedInputStream(sourceFIS,BUFFER);
+
+                ZipEntry entry = new ZipEntry(zip.getName());
+                destZOS.putNextEntry(entry);
+
+                int count;
+                while ((count = sourceBIS.read(data, 0, BUFFER)) != -1) {
+                    destZOS.write(data, 0, count);
+                }
+            }
+            destZOS.close();
+            Log.d(TAG, destPath + " ZIP created");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File[] getReportsPaths(Context context) {
+        return new File(context.getFilesDir().getAbsolutePath() + "/zips").listFiles();
     }
 }

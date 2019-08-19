@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.report.entities.Draft;
 import com.example.report.reporter.Recognizer;
@@ -43,6 +44,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
     private RecyclerView mRecyclerView;
     private AddReportAdapter mAdapter;
     private MaterialButton mCreateButton;
+    private TextView mProgressText;
 
 
 
@@ -54,6 +56,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         mProgressBar = findViewById(R.id.progress_bar);
         mRecyclerView = findViewById(R.id.rv_add_report);
         mCreateButton = findViewById(R.id.button_create_report);
+        mProgressText = findViewById(R.id.text_progress_loading_images);
 
 
 
@@ -181,13 +184,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
     }
 
-
-
-
-
-
-
-    class BitmapAsyncTask extends AsyncTask<Intent, Boolean, List<Draft>> {
+    class BitmapAsyncTask extends AsyncTask<Intent, Integer, List<Draft>> {
 
         private WeakReference<Context> contextRef;
 
@@ -199,19 +196,26 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressBar.setVisibility(View.VISIBLE);
+            mProgressText.setVisibility(View.VISIBLE);
+            // TODO create string res
+            mProgressText.setText("Подготовка...");
         }
 
         @Override
         protected List<Draft> doInBackground(Intent... intents) {
             try {
-                List<Draft> drafts= new ArrayList<Draft>();
+                List<Draft> drafts= new ArrayList<>();
                 List<Uri> uris = ReportIO.getUriList(intents[0]);
                 Recognizer recognizer = new Recognizer(contextRef.get());
-                for (int i = 0; i < uris.size(); i++) {
+
+                int size = uris.size();
+                for (int i = 0; i < size; i++) {
+                    publishProgress(size - i);
                     Draft draft = new Draft(uris.get(i));
                     draft.setNumber(recognizer.getDraftNum(ReportIO.getBitmapFromUri(contextRef.get(), uris.get(i))));
                     drafts.add(draft);
                 }
+                recognizer.close();
                 return drafts;
 
             } catch (IOException e) {
@@ -221,8 +225,8 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
         }
 
         @Override
-        protected void onProgressUpdate(Boolean... values) {
-            super.onProgressUpdate(values);
+        protected void onProgressUpdate(Integer... values) {
+            mProgressText.setText(getResources().getString(R.string.progress_loading_prefix) + " " + values[0]);
         }
 
         @Override
@@ -231,6 +235,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
             mData.addAll(drafts);
             mAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
+            mProgressText.setVisibility(View.INVISIBLE);
             mCreateButton.setVisibility(View.VISIBLE);
             checkForCreationAvailability();
         }
@@ -245,11 +250,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
         @Override
         protected Void doInBackground(List<Draft>... lists) {
-            try {
-                ReportIO.createReport(contextRef.get(), lists[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ReportIO.createReport(contextRef.get(), lists[0]);
             return null;
         }
     }

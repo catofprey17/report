@@ -18,5 +18,6 @@
     <string name="snack_message_add_report_prefix">It\'s necessary to number</string>
     <string name="snack_mesage_add_report_postfix">drafts</string>
     <string name="create_report_button_text">Create a report</string>
+    <string name="progress_loading_prefix">Drafts left:</string>
 
 </resources>

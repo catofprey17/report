@@ -6,17 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.text.format.DateFormat;
-import android.text.format.Time;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.report.MainActivity;
+import com.example.report.ReportsActivity;
 import com.example.report.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 // TODO Find optimal Service for running
 
@@ -100,7 +97,7 @@ public class NotificationFactory {
     }
 
     private static PendingIntent getContent(Context context) {
-        Intent launchAppIntent = new Intent(context, MainActivity.class);
+        Intent launchAppIntent = new Intent(context, ReportsActivity.class);
         return PendingIntent.getActivity(context,
                 PENDING_INTENT_ID,
                 launchAppIntent,
