@@ -88,6 +88,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case IMAGES_REQUEST_CODE:
                 switch (resultCode) {
@@ -102,7 +103,7 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
                 }
                 break;
 
-                // TODO cache exceptions
+            // TODO cache exceptions
             case EDIT_DRAFT_REQUEST_CODE:
                 switch (resultCode) {
                     case Activity.RESULT_OK:

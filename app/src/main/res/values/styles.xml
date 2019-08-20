@@ -10,6 +10,7 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="dividerHorizontal">@color/dividerColor</item>
+        <item name="android:actionMenuTextColor">@color/textColorPrimary</item>
     </style>
 
 </resources>

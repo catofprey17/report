@@ -12,4 +12,5 @@
     <string name="snack_mesage_add_report_postfix">" "</string>
     <string name="create_report_button_text">Создать отчёт</string>
     <string name="progress_loading_prefix">"Осталось чертежей: "</string>
+    <string name="menu_button_clean">Удалить все отчёты</string>
 </resources>

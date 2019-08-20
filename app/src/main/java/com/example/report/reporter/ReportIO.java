@@ -43,7 +43,7 @@ public class ReportIO {
 
 
 
-    private static void copyTessdataToInternalStorage(Context context) throws IOException {
+     public static void copyTessdataToInternalStorage(Context context) throws IOException {
 
         File directory = new File(context.getFilesDir().getAbsolutePath() + "/" + TESSDATA_SUB);
         if (!directory.exists()) {
@@ -321,8 +321,12 @@ public class ReportIO {
     }
 
     public static List<File> getReportsPaths(Context context) {
-        List<File> result = new ArrayList<>(Arrays.asList(new File(context.getFilesDir().getAbsolutePath() + "/zips").listFiles()));
-        return result;
+         File file = new File(context.getFilesDir().getAbsolutePath() + "/zips");
+         if (!file.exists()) {
+             createFolder(file.getPath());
+         }
+         List<File> result = new ArrayList<>(Arrays.asList(file.listFiles()));
+         return result;
     }
 
     public static void removeReport(File file) {
@@ -332,5 +336,10 @@ public class ReportIO {
             Log.d(TAG, file.getName() + " removing failed");
         }
 
+    }
+
+    public static void removeAllReports(Context context) {
+         File file = new File(context.getFilesDir().getAbsolutePath() + "/zips");
+         cleanFolder(file);
     }
 }
