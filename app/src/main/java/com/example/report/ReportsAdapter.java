@@ -14,16 +14,23 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.report.reporter.ReportIO;
+
 import java.io.File;
+import java.util.List;
 
 public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsViewHolder> {
 
-    private File[] archives;
+    private List<File> archives;
     private Context context;
 
-    public ReportsAdapter(Context context, File[] archives) {
+    public ReportsAdapter(Context context, List<File> archives) {
         this.archives = archives;
         this.context = context;
+    }
+    public void updateData(List<File> archives) {
+        this.archives = archives;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -40,7 +47,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
 
     @Override
     public void onBindViewHolder(@NonNull ReportsViewHolder holder, int position) {
-        holder.mTextView.setText(archives[position].getName());
+        holder.mTextView.setText(archives.get(position).getName());
     }
 
     @Override
@@ -48,7 +55,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
         if (archives == null) {
             return 0;
         }
-        return archives.length;
+        return archives.size();
     }
 
     class ReportsViewHolder extends RecyclerView.ViewHolder {
@@ -71,11 +78,20 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
                     sendIntent.setAction(Intent.ACTION_SEND);
                     Uri uri = FileProvider.getUriForFile(
                             context,
-                            "com.example.report.provider", //(use your app signature + ".provider" )
-                            archives[getAdapterPosition()]);
+                            "com.example.report.provider",
+                            archives.get(getAdapterPosition()));
                     sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     sendIntent.setType("application/zip");
                     context.startActivity(sendIntent);
+                }
+            });
+
+            mButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ReportIO.removeReport(archives.get(getAdapterPosition()));
+                    archives.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                 }
             });
         }

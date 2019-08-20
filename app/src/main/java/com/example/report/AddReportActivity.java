@@ -253,6 +253,14 @@ public class AddReportActivity extends AppCompatActivity implements AddReportAda
             ReportIO.createReport(contextRef.get(), lists[0]);
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            setResult(RESULT_OK);
+            finish();
+        }
+
     }
 
 }

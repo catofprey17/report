@@ -4,20 +4,14 @@ import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
-import android.hardware.usb.UsbInterface;
-import android.icu.util.LocaleData;
-import android.icu.util.TaiwanCalendar;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import com.example.report.entities.Draft;
-import com.google.android.material.circularreveal.CircularRevealHelper;
-import com.googlecode.tesseract.android.TessPdfRenderer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,33 +19,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ReportIO {
 
     private static final String TAG = ReportIO.class.getSimpleName();
-    public static final String TESSDATA_SUB = "tessdata";
-    public static final String TESSDATA_FILE = TESSDATA_SUB + "/eng.traineddata";
-    public static final String TEMPORARY_SUBFOLDER = "/temp";
+    private static final String TESSDATA_SUB = "tessdata";
+    private static final String TESSDATA_FILE = TESSDATA_SUB + "/eng.traineddata";
+    private static final String TEMPORARY_SUBFOLDER = "/temp";
+    private static final int BUFFER_SIZE = 2048;
 
 
 
-    public static void copyTessdataToInternalStorage(Context context) throws IOException {
+    private static void copyTessdataToInternalStorage(Context context) throws IOException {
 
         File directory = new File(context.getFilesDir().getAbsolutePath() + "/" + TESSDATA_SUB);
         if (!directory.exists()) {
@@ -114,12 +106,11 @@ public class ReportIO {
     }
 
     // TODO Complete method
-    public static Boolean createReport(Context context, List<Draft> drafts) {
-        String hz = fillTemporaryFolder(context, drafts);
-        return null;
+    public static void createReport(Context context, List<Draft> drafts) {
+        fillTemporaryFolder(context, drafts);
     }
 
-    private static String fillTemporaryFolder(Context context, List<Draft> drafts) {
+    private static void fillTemporaryFolder(Context context, List<Draft> drafts) {
 
         // Get count of drafts for each number
         LinkedHashMap<String, Integer> numbers = new LinkedHashMap<>();
@@ -183,10 +174,7 @@ public class ReportIO {
         String finalZipPath = context.getFilesDir().getAbsolutePath() + "/zips";
 
         createFolder(finalZipPath);
-        createFinalZip(path + "/zips", finalZipPath + "/" +dateFormat.format(currentDate) + ".zip");
-
-
-        return null;
+        createFinalZip(context, path + "/zips", finalZipPath + "/" +dateFormat.format(currentDate) + ".zip");
     }
 
 
@@ -199,7 +187,7 @@ public class ReportIO {
         try {
             bis = new BufferedInputStream(new FileInputStream(context.getContentResolver().openFileDescriptor(uri, "r").getFileDescriptor()));
             bos = new BufferedOutputStream(new FileOutputStream(destination,false));
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[BUFFER_SIZE];
             bis.read(buf);
             do {
                 bos.write(buf);
@@ -208,6 +196,8 @@ public class ReportIO {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -219,39 +209,32 @@ public class ReportIO {
         }
     }
 
-    private static boolean createFolder(String path) {
+    private static void createFolder(String path) {
         File directory = new File(path);
-        boolean flag = true;
         if (directory.exists()) {
             Log.d(TAG, "Directory " + path + " already exists!");
         } else {
-            flag = directory.mkdir();
-            if (flag)
+            if (directory.mkdir())
                 Log.d(TAG, "Directory " + path + " created successful!");
             else
                 Log.d(TAG, "Directory " + path + " creation failed!");
         }
-        return flag;
     }
 
-    private static boolean updateFolder(String path) {
+    private static void updateFolder(String path) {
         File directory = new File(path);
-        boolean flag;
         if (directory.exists()) {
             cleanFolder(directory);
-            flag = directory.mkdir();
-            if (flag)
+            if (directory.mkdir())
                 Log.d(TAG, "Directory " + path + " updated successful!");
             else
                 Log.d(TAG, "Directory " + path + " update failed!");
         } else {
-            flag = directory.mkdir();
-            if (flag)
+            if (directory.mkdir())
                 Log.d(TAG, "Directory " + path + " created successful!");
             else
                 Log.d(TAG, "Directory " + path + " creation failed!");
         }
-        return flag;
     }
 
     private static void cleanFolder(File directory) {
@@ -265,7 +248,6 @@ public class ReportIO {
     private static void createSubZips(String sourcePath, String destPath) {
 
         File[] folder = new File(sourcePath).listFiles();
-        final int BUFFER = 2048;
 
         for (File subfolder: folder) {
             try {
@@ -273,18 +255,18 @@ public class ReportIO {
                 BufferedInputStream sourceBIS;
                 ZipOutputStream destZOS = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipPath)));
                 destZOS.setLevel(0);
-                byte data[] = new byte[BUFFER];
+                byte data[] = new byte[BUFFER_SIZE];
 
                 File[] draftFolder = subfolder.listFiles();
                 for (File draft: draftFolder) {
                     FileInputStream sourceFIS = new FileInputStream(draft);
-                    sourceBIS = new BufferedInputStream(sourceFIS,BUFFER);
+                    sourceBIS = new BufferedInputStream(sourceFIS,BUFFER_SIZE);
 
                     ZipEntry entry = new ZipEntry(draft.getName());
                     destZOS.putNextEntry(entry);
 
                     int count;
-                    while ((count = sourceBIS.read(data, 0, BUFFER)) != -1) {
+                    while ((count = sourceBIS.read(data, 0, BUFFER_SIZE)) != -1) {
                         destZOS.write(data, 0, count);
                     }
 
@@ -307,29 +289,30 @@ public class ReportIO {
 
     }
 
-    private static void createFinalZip(String sourcePath, String destPath) {
+    private static void createFinalZip(Context context, String sourcePath, String destPath) {
         File[] zips = new File(sourcePath).listFiles();
-        final int BUFFER = 2048;
 
         try {
             BufferedInputStream sourceBIS;
             ZipOutputStream destZOS = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destPath)));
             destZOS.setLevel(0);
-            byte data[] = new byte[BUFFER];
+            byte data[] = new byte[BUFFER_SIZE];
             for (File zip: zips) {
                 FileInputStream sourceFIS = new FileInputStream(zip);
-                sourceBIS = new BufferedInputStream(sourceFIS,BUFFER);
+                sourceBIS = new BufferedInputStream(sourceFIS,BUFFER_SIZE);
 
                 ZipEntry entry = new ZipEntry(zip.getName());
                 destZOS.putNextEntry(entry);
 
                 int count;
-                while ((count = sourceBIS.read(data, 0, BUFFER)) != -1) {
+                while ((count = sourceBIS.read(data, 0, BUFFER_SIZE)) != -1) {
                     destZOS.write(data, 0, count);
                 }
             }
             destZOS.close();
             Log.d(TAG, destPath + " ZIP created");
+
+            cleanFolder(new File(context.getFilesDir().getAbsolutePath() + TEMPORARY_SUBFOLDER));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -337,7 +320,17 @@ public class ReportIO {
         }
     }
 
-    public static File[] getReportsPaths(Context context) {
-        return new File(context.getFilesDir().getAbsolutePath() + "/zips").listFiles();
+    public static List<File> getReportsPaths(Context context) {
+        List<File> result = new ArrayList<>(Arrays.asList(new File(context.getFilesDir().getAbsolutePath() + "/zips").listFiles()));
+        return result;
+    }
+
+    public static void removeReport(File file) {
+        if (file.delete()) {
+            Log.d(TAG, file.getName() + " removed");
+        } else {
+            Log.d(TAG, file.getName() + " removing failed");
+        }
+
     }
 }
