@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:key="@string/setting_group_send_key"
+        android:title="@string/settings_group_send_title">
+
+        <SwitchPreference
+            android:key="@string/settings_send_key"
+            android:title="@string/settings_send_title"/>
+
+        <EditTextPreference
+            android:key="@string/settings_email_key"
+            android:summary="@string/settings_email_summary"
+            app:title="@string/settings_email_title" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

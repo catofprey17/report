@@ -1,4 +1,4 @@
-package com.example.report;
+package com.example.report.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.report.ui.adapters.AddReportAdapter;
+import com.example.report.R;
 import com.example.report.entities.Draft;
 import com.example.report.reporter.Recognizer;
 import com.example.report.reporter.ReportIO;
@@ -32,7 +34,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddReportActivity extends AppCompatActivity implements AddReportAdapter.ItemClickListener{
+public class AddReportActivity extends AppCompatActivity implements AddReportAdapter.ItemClickListener {
 
     private static final int IMAGES_REQUEST_CODE = 304;
     private static final int PERMISSION_REQUEST_CODE = 103;

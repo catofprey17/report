@@ -2,7 +2,7 @@
 <!-- TODO Fix menu item color-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context = ".ReportsActivity">
+    tools:context = ".ui.ReportsActivity">
 
     <item android:id="@+id/menu_button_clear_archives"
         android:title="@string/menu_button_clean" />

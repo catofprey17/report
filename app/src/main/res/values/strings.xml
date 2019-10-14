@@ -20,5 +20,12 @@
     <string name="create_report_button_text">Create a report</string>
     <string name="progress_loading_prefix">Drafts left:</string>
     <string name="menu_button_clean">Remove all reports</string>
+    <string name="settings_email_key" translatable="false">email</string>
+    <string name="settings_email_title" translatable="false">Email</string>
+    <string name="settings_email_summary">Email for reports</string>
+    <string name="settings_send_key" translatable="false">send</string>
+    <string name="settings_send_title">Send to email</string>
+    <string name="setting_group_send_key" translatable="false">group_send</string>
+    <string name="settings_group_send_title">Sending</string>
 
 </resources>

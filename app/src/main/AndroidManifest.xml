@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.report">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,12 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditDraftActivity"
-            android:label="@string/label_edit_draft"/>
-        <activity android:name=".AddReportActivity"
-            android:label="@string/label_add_report"/>
+        <activity android:name=".ui.SettingsActivity"></activity>
         <activity
-            android:name=".ReportsActivity"
+            android:name=".ui.EditDraftActivity"
+            android:label="@string/label_edit_draft" />
+        <activity
+            android:name=".ui.AddReportActivity"
+            android:label="@string/label_add_report" />
+        <activity
+            android:name=".ui.ReportsActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,17 +25,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <provider
-            android:authorities="com.example.report.provider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.report.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path">
-
-            </meta-data>
+                android:resource="@xml/file_path"></meta-data>
         </provider>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 </manifest>

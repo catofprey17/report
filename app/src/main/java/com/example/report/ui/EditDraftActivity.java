@@ -1,4 +1,4 @@
-package com.example.report;
+package com.example.report.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.report.R;
 import com.example.report.entities.Draft;
 import com.example.report.reporter.ReportIO;
 

@@ -1,4 +1,4 @@
-package com.example.report;
+package com.example.report.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.report.R;
 import com.example.report.entities.Draft;
 
 import java.io.IOException;

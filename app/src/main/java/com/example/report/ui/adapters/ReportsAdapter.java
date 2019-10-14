@@ -1,4 +1,4 @@
-package com.example.report;
+package com.example.report.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.report.R;
 import com.example.report.reporter.ReportIO;
 
 import java.io.File;

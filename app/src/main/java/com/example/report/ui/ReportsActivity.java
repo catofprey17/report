@@ -1,10 +1,11 @@
-package com.example.report;
+package com.example.report.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.report.R;
+import com.example.report.ui.adapters.ReportsAdapter;
 import com.example.report.reporter.ReportIO;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
