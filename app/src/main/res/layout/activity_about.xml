@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SettingsActivity">
+    tools:context=".ui.AboutActivity">
 
-    <FrameLayout
-        android:id="@+id/settings_fragment_container"
+    <WebView
+        android:id="@+id/web_view_about"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

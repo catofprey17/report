@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context = ".ui.ReportsActivity">
 
+    <item android:id="@+id/menu_button_settings"
+        android:title="@string/menu_button_settings" />
+
     <item android:id="@+id/menu_button_clear_archives"
         android:title="@string/menu_button_clean" />
+
+    <item android:id="@+id/menu_button_about"
+        android:title="@string/menu_button_about" />
 </menu>

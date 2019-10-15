@@ -27,5 +27,7 @@
     <string name="settings_send_title">Send to email</string>
     <string name="setting_group_send_key" translatable="false">group_send</string>
     <string name="settings_group_send_title">Sending</string>
+    <string name="menu_button_about">About</string>
+    <string name="menu_button_settings">Settings</string>
 
 </resources>

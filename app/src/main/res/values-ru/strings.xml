@@ -16,4 +16,6 @@
     <string name="settings_email_summary">Email для отправки отчетов</string>
     <string name="settings_group_send_title">Отправка</string>
     <string name="settings_send_title">Отправлять на email</string>
+    <string name="menu_button_about">О программе</string>
+    <string name="menu_button_settings">Настройки</string>
 </resources>

@@ -77,14 +77,23 @@ public class ReportsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_button_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.menu_button_clear_archives:
                 ReportIO.removeAllReports(this);
                 mAdapter.updateData(ReportIO.getReportsPaths(this));
                 mAdapter.notifyDataSetChanged();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+                break;
 
+            case R.id.menu_button_about:
+                startActivity(new Intent(ReportsActivity.this, AboutActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+        
     }
 
     @Override
